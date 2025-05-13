@@ -2,92 +2,150 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mouse Gesture Navigation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>GestureFlow Pro</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* GestureFlow Pro - Professional Dark Theme with Bright Stroke & Full Viewport */
+        :root {
+            --pro-bg-dark: #181a1b;
+            --pro-bg-medium: #25282b;
+            --pro-accent-primary: #64ffda; /* Teal accent */
+            --pro-accent-secondary: #f9f871; /* Yellow accent */
+            --pro-text-primary: #e6e6e6;
+            --pro-text-secondary: #a8a8a8;
+            --pro-border-dark: #333;
+            --pro-shadow-light: rgba(100, 255, 218, 0.1);
+            --pro-shadow-medium: rgba(100, 255, 218, 0.2);
+            --pro-success: #8bc34a;
+            --pro-error: #e57373;
+            /* --pro-stroke-bright: #a0f4ff; /* Brighter Cyan for stroke - NOT USED */
+        }
+
+        html, body {
+            height: 100%; /* Ensure full height */
+            margin: 0; /* Remove default body margin */
+            overflow: hidden; /* Prevent scrollbars if content overflows slightly */
         }
 
         body {
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(to right, #74ebd5, #9face6);
-            color: #333;
-            padding: 20px;
+            font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--pro-bg-dark);
+            color: var(--pro-text-primary);
+            padding: 20px; /* Reduced padding */
             display: flex;
             flex-direction: column;
             align-items: center;
+            justify-content: flex-start; /* Align items from the top */
+            line-height: 1.6; /* Slightly reduced line height */
+            box-sizing: border-box; /* Include padding in element's total width and height */
         }
 
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: #4CAF50;
+            font-size: 2.8rem; /* Slightly smaller heading */
+            margin-bottom: 15px; /* Reduced margin */
+            color: var(--pro-accent-primary);
             text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+            letter-spacing: 0.04em;
+            margin-top: 20px; /* Space from the top */
         }
 
         #instructions {
-            background: rgba(255, 255, 255, 0.8);
-            padding: 20px;
-            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            width: 80%;
+            background: var(--pro-bg-medium);
+            padding: 20px; /* Reduced padding */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5); /* Smaller shadow */
+            border-radius: 12px; /* Smaller radius */
+            width: 70%; /* Slightly smaller width */
+            max-width: 500px; /* Smaller max width */
             text-align: center;
+            border: 1px solid var(--pro-border-dark);
+            margin-top: 20px; /* Space below heading */
+            font-size: 0.9em; /* Smaller font size */
+        }
+
+        #instructions p {
+            color: var(--pro-text-secondary);
+            margin-bottom: 15px; /* Reduced margin */
         }
 
         .gesture-instruction {
-            margin-top: 15px;
+            margin-top: 15px; /* Reduced margin */
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 10px; /* Reduced gap */
+            align-items: center;
         }
 
         .gesture {
-            font-weight: bold;
-            color: #007BFF;
+            font-weight: 500; /* Slightly lighter font weight */
+            color: var(--pro-accent-secondary);
+            padding: 6px 10px; /* Reduced padding */
+            border-radius: 6px; /* Smaller radius */
+            background: rgba(255, 248, 113, 0.1);
+            border: 1px solid rgba(255, 248, 113, 0.2);
         }
 
         #gestureArea {
-            width: 80%;
-            height: 400px;
-            background-color: #f2f2f2;
-            margin-top: 30px;
-            border: 2px dashed #009688;
+            width: 90%; /* Increased width for more space */
+            max-width: 800px; /* Increased max width */
+            height: 50vh; /* Use viewport height for dynamic sizing */
+            background: #222;
+            margin-top: 30px; /* Increased margin */
+            border: 3px dashed var(--pro-accent-primary);
             position: relative;
             cursor: crosshair;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 18px;
+            box-shadow: 0 10px 20px var(--pro-shadow-medium);
+            overflow: hidden;
+            transition: border-color 0.3s ease-in-out;
+        }
+
+        #gestureArea:hover {
+            border-color: var(--pro-accent-secondary);
         }
 
         canvas {
             position: absolute;
             top: 0;
             left: 0;
+            width: 100%;
+            height: 100%;
         }
 
         #errorMessage {
-            color: red;
-            font-weight: bold;
-            background: #f8d7da;
-            padding: 10px;
-            border-radius: 8px;
-            margin-top: 20px;
-            width: 80%;
+            color: var(--pro-error);
+            font-weight: 500;
+            background: rgba(229, 115, 115, 0.15);
+            padding: 12px; /* Reduced padding */
+            border-radius: 10px; /* Smaller radius */
+            margin-top: 25px; /* Reduced margin */
+            width: 70%; /* Smaller width */
+            max-width: 500px; /* Smaller max width */
             display: none;
             text-align: center;
+            border: 1px solid rgba(229, 115, 115, 0.3);
+            font-size: 0.9em; /* Smaller font size */
         }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <h1>Mouse Gesture Navigation</h1>
+    <h1>Gesture Flow</h1>
 
     <div id="instructions">
-        <p>Use the mouse to perform gestures and navigate to different websites:</p>
+        <p>Perform these gestures in the drawing area to navigate:</p>
         <div class="gesture-instruction">
-            <p><span class="gesture">Swipe Left:</span> Go to Gmail</p>
-            <p><span class="gesture">Swipe Right:</span> Go to GitHub</p>
-            <p><span class="gesture">Swipe Up:</span> Go to YouTube</p>
-            <p><span class="gesture">Swipe Down:</span> Go to WhatsApp Web</p>
+            <span class="gesture">←</span> <span>Swipe Left: Navigate to Gmail</span>
+        </div>
+        <div class="gesture-instruction">
+            <span class="gesture">→</span> <span>Swipe Right: Open GitHub</span>
+        </div>
+        <div class="gesture-instruction">
+            <span class="gesture">↑</span> <span>Swipe Up: Head to YouTube</span>
+        </div>
+        <div class="gesture-instruction">
+            <span class="gesture">↓</span> <span>Swipe Down: Access WhatsApp Web</span>
         </div>
     </div>
 
@@ -95,7 +153,7 @@
         <canvas id="drawCanvas"></canvas>
     </div>
 
-    <div id="errorMessage">Improper gesture, please try again.</div>
+    <div id="errorMessage">Gesture not recognized. Ensure a clear, linear swipe.</div>
 
     <script>
         const gestureArea = document.getElementById('gestureArea');
@@ -104,7 +162,7 @@
         const errorMessage = document.getElementById('errorMessage');
         let gesturePath = [];
         let drawing = false;
-        const gestureThreshold = 50;
+        const gestureThreshold = 60; // Slightly increased threshold for more deliberate gestures
 
         function resizeCanvas() {
             canvas.width = gestureArea.clientWidth;
@@ -127,8 +185,8 @@
             if (!drawing) return;
             gesturePath.push({ x: event.offsetX, y: event.offsetY });
             ctx.lineTo(event.offsetX, event.offsetY);
-            ctx.strokeStyle = "#333";
-            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#a0f4ff'; /* Direct bright cyan color */
+            ctx.lineWidth = 4;
             ctx.stroke();
         });
 
@@ -138,13 +196,15 @@
         });
 
         function detectGesture(path) {
-            if (path.length < 5) {
+            if (path.length < 8) { // Increased minimum path length for more deliberate gestures
                 showImproperGestureMessage();
                 return;
             }
 
-            const dx = path[path.length - 1].x - path[0].x;
-            const dy = path[path.length - 1].y - path[0].y;
+            const startPoint = path[0];
+            const endPoint = path[path.length - 1];
+            const dx = endPoint.x - startPoint.x;
+            const dy = endPoint.y - startPoint.y;
 
             if (!isLinearGesture(path)) {
                 showImproperGestureMessage();
@@ -161,33 +221,51 @@
         }
 
         function isLinearGesture(path) {
-            let tolerance = 20; // Increased tolerance for slight deviations
-            let horizontal = true;
-            let vertical = true;
+            const tolerance = 15;
+            const angleThreshold = 0.5; // Radians - about 28.6 degrees
 
-            for (let i = 1; i < path.length; i++) {
-                const deltaX = Math.abs(path[i].x - path[i - 1].x);
-                const deltaY = Math.abs(path[i].y - path[i - 1].y);
+            const startPoint = path[0];
+            const endPoint = path[path.length - 1];
+            const totalDistance = Math.sqrt(Math.pow(endPoint.x - startPoint.x, 2) + Math.pow(endPoint.y - startPoint.y, 2));
 
-                if (deltaY > tolerance) {
-                    horizontal = false;
+            let cumulativeDistance = 0;
+            let previousPoint = startPoint;
+
+            for (let i = 1; i < path.length - 1; i++) {
+                const currentPoint = path[i];
+                const segmentDistance = Math.sqrt(Math.pow(currentPoint.x - previousPoint.x, 2) + Math.pow(currentPoint.y - previousPoint.y, 2));
+                cumulativeDistance += segmentDistance;
+
+                // Check if the path deviates significantly from a straight line
+                const directDistanceToCurrent = Math.sqrt(Math.pow(currentPoint.x - startPoint.x, 2) + Math.pow(currentPoint.y - startPoint.y, 2));
+                if (directDistanceToCurrent < cumulativeDistance * (1 - 0.2)) { // Allow 20% deviation
+                    return false;
                 }
-                if (deltaX > tolerance) {
-                    vertical = false;
-                }
 
-                if (!horizontal && !vertical) {
-                    return false; // Neither predominantly horizontal nor vertical
+                previousPoint = currentPoint;
+            }
+
+            // Further angle consistency check (optional, but enhances "pro" feel)
+            if (path.length > 3) {
+                const initialAngle = Math.atan2(path[1].y - startPoint.y, path[1].x - startPoint.x);
+                for (let i = 2; i < path.length; i++) {
+                    const currentAngle = Math.atan2(path[i].y - path[i - 1].y, path[i].x - path[i - 1].x);
+                    if (Math.abs(currentAngle - initialAngle) > angleThreshold &&
+                        Math.abs(currentAngle - (initialAngle + Math.PI)) > angleThreshold &&
+                        Math.abs(currentAngle - (initialAngle - Math.PI)) > angleThreshold) {
+                        return false;
+                    }
                 }
             }
-            return horizontal || vertical;
+
+            return true;
         }
 
         function showImproperGestureMessage() {
             errorMessage.style.display = 'block';
             setTimeout(() => {
                 errorMessage.style.display = 'none';
-            }, 1500);
+            }, 2000); // Slightly longer message display
         }
     </script>
 
