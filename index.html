@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouse Gesture Navigation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to right, #74ebd5, #9face6);
+            color: #333;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #4CAF50;
+            text-align: center;
+        }
+
+        #instructions {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            width: 80%;
+            text-align: center;
+        }
+
+        .gesture-instruction {
+            margin-top: 15px;
+        }
+
+        .gesture {
+            font-weight: bold;
+            color: #007BFF;
+        }
+
+        #gestureArea {
+            width: 80%;
+            height: 400px;
+            background-color: #f2f2f2;
+            margin-top: 30px;
+            border: 2px dashed #009688;
+            position: relative;
+            cursor: crosshair;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        #errorMessage {
+            color: red;
+            font-weight: bold;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 20px;
+            width: 80%;
+            display: none;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Mouse Gesture Navigation</h1>
+
+    <div id="instructions">
+        <p>Use the mouse to perform gestures and navigate to different websites:</p>
+        <div class="gesture-instruction">
+            <p><span class="gesture">Swipe Left:</span> Go to Gmail</p>
+            <p><span class="gesture">Swipe Right:</span> Go to GitHub</p>
+            <p><span class="gesture">Swipe Up:</span> Go to YouTube</p>
+            <p><span class="gesture">Swipe Down:</span> Go to WhatsApp Web</p>
+        </div>
+    </div>
+
+    <div id="gestureArea">
+        <canvas id="drawCanvas"></canvas>
+    </div>
+
+    <div id="errorMessage">Improper gesture, please try again.</div>
+
+    <script>
+        const gestureArea = document.getElementById('gestureArea');
+        const canvas = document.getElementById('drawCanvas');
+        const ctx = canvas.getContext('2d');
+        const errorMessage = document.getElementById('errorMessage');
+        let gesturePath = [];
+        let drawing = false;
+        const gestureThreshold = 50;
+
+        function resizeCanvas() {
+            canvas.width = gestureArea.clientWidth;
+            canvas.height = gestureArea.clientHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        gestureArea.addEventListener('mousedown', (event) => {
+            drawing = true;
+            gesturePath = [];
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            gesturePath.push({ x: event.offsetX, y: event.offsetY });
+            ctx.beginPath();
+            ctx.moveTo(event.offsetX, event.offsetY);
+        });
+
+        gestureArea.addEventListener('mousemove', (event) => {
+            if (!drawing) return;
+            gesturePath.push({ x: event.offsetX, y: event.offsetY });
+            ctx.lineTo(event.offsetX, event.offsetY);
+            ctx.strokeStyle = "#333";
+            ctx.lineWidth = 3;
+            ctx.stroke();
+        });
+
+        gestureArea.addEventListener('mouseup', () => {
+            drawing = false;
+            detectGesture(gesturePath);
+        });
+
+        function detectGesture(path) {
+            if (path.length < 5) {
+                showImproperGestureMessage();
+                return;
+            }
+
+            const dx = path[path.length - 1].x - path[0].x;
+            const dy = path[path.length - 1].y - path[0].y;
+
+            if (!isLinearGesture(path)) {
+                showImproperGestureMessage();
+                return;
+            }
+
+            if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > gestureThreshold) {
+                window.location.href = dx > 0 ? 'https://www.github.com' : 'https://www.gmail.com';
+            } else if (Math.abs(dy) > Math.abs(dx) && Math.abs(dy) > gestureThreshold) {
+                window.location.href = dy > 0 ? 'https://web.whatsapp.com/' : 'https://www.youtube.com/';
+            } else {
+                showImproperGestureMessage();
+            }
+        }
+
+        function isLinearGesture(path) {
+            let tolerance = 20; // Increased tolerance for slight deviations
+            let horizontal = true;
+            let vertical = true;
+
+            for (let i = 1; i < path.length; i++) {
+                const deltaX = Math.abs(path[i].x - path[i - 1].x);
+                const deltaY = Math.abs(path[i].y - path[i - 1].y);
+
+                if (deltaY > tolerance) {
+                    horizontal = false;
+                }
+                if (deltaX > tolerance) {
+                    vertical = false;
+                }
+
+                if (!horizontal && !vertical) {
+                    return false; // Neither predominantly horizontal nor vertical
+                }
+            }
+            return horizontal || vertical;
+        }
+
+        function showImproperGestureMessage() {
+            errorMessage.style.display = 'block';
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 1500);
+        }
+    </script>
+
+</body>
+</html>
